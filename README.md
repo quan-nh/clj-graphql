@@ -1,6 +1,7 @@
 # clj-graphql
 
 - [part 1: hello graphql](doc/hello.md)
+- [part 2: using component](doc/component.md)
 
 ## Installation
 
