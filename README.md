@@ -2,6 +2,10 @@
 
 - [part 1: hello graphql](doc/hello.md)
 - [part 2: using component](doc/component.md)
+- [part 3: query and mutation](doc/query_mutation.md)
+- [part 4: db](doc/db.md)
+- [part 5: subscription](doc/subscription.md)
+- [part 6: auth](doc/auth.md)
 
 ## Installation
 
