@@ -5,16 +5,53 @@
             [com.walmartlabs.lacinia.schema :as schema]
             [com.walmartlabs.lacinia.util :as util]))
 
-(defn ^:private resolve-hello
-  [context args value]
-  "Hello, Clojurians!")
+(def data (edn/read-string (slurp (io/resource "data.edn"))))
+
+(defn game-by-id
+  [_ {:keys [id]} _]
+  (->> (:games data)
+       (filter #(= id (:id %)))
+       first))
+
+(defn member-by-id
+  [_ {:keys [id]} _]
+  (->> (:members data)
+       (filter #(= id (:id %)))
+       first))
+
+(defn rating-summary
+  [_ _ {game-id :id}]
+  (let [ratings (->> (:ratings data)
+                     (filter #(= game-id (:game_id %)))
+                     (map :rating))
+        n       (count ratings)]
+    {:count   n
+     :average (if (zero? n)
+                0
+                (/ (apply + ratings)
+                   (float n)))}))
+
+(defn member-ratings
+  [_ _ {member-id :id}]
+  (->> (:ratings data)
+       (filter #(= member-id (:member_id %)))))
+
+(defn game-rating->game
+  [_ _ {:keys [game_id]}]
+  (->> (:games data)
+       (filter #(= game_id (:id %)))
+       first))
 
 (defn load-schema
   []
   (-> (io/resource "hello-schema.edn")
       slurp
       edn/read-string
-      (util/inject-resolvers {:queries/hello resolve-hello})
+      (util/attach-resolvers {:query/game-by-id         game-by-id
+                              :query/member-by-id       member-by-id
+                              :BoardGame/rating-summary rating-summary
+                              :GameRating/game          game-rating->game
+                              :Member/ratings           member-ratings})
       schema/compile))
 
 (defrecord SchemaProvider [schema]

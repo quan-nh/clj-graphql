@@ -1,0 +1,40 @@
+{:games
+ [{:id          "1234"
+   :name        "Zertz"
+   :description "Two player abstract with forced moves and shrinking board"
+   :min_players 2
+   :max_players 2
+   :designers   "Kris Burm"}
+  {:id          "1235"
+   :name        "Dominion"
+   :description "Created the deck-building genre; zillions of expansions"
+   :min_players 2
+   :designers   "Donald X. Vaccarino"}
+  {:id          "1236"
+   :name        "Tiny Epic Galaxies"
+   :description "Fast dice-based sci-fi space game with a bit of chaos"
+   :min_players 1
+   :max_players 4
+   :designers   "Scott Almes"}
+  {:id          "1237"
+   :name        "7 Wonders: Duel"
+   :description "Tense, quick card game of developing civilizations"
+   :min_players 2
+   :max_players 2
+   :designers   "Antoine Bauza, Bruno Cathala"}]
+
+ :members
+ [{:id   "37"
+   :name "curiousattemptbunny"}
+  {:id   "1410"
+   :name "bleedingedge"}
+  {:id   "2812"
+   :name "missyo"}]
+
+ :ratings
+ [{:member_id "37" :game_id "1234" :rating 3}
+  {:member_id "1410" :game_id "1234" :rating 5}
+  {:member_id "1410" :game_id "1236" :rating 4}
+  {:member_id "1410" :game_id "1237" :rating 4}
+  {:member_id "2812" :game_id "1237" :rating 4}
+  {:member_id "37" :game_id "1237" :rating 5}]}
