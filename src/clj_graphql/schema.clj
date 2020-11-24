@@ -3,61 +3,59 @@
             [clojure.java.io :as io]
             [com.stuartsierra.component :as component]
             [com.walmartlabs.lacinia.schema :as schema]
-            [com.walmartlabs.lacinia.util :as util]))
-
-(def data (edn/read-string (slurp (io/resource "data.edn"))))
+            [com.walmartlabs.lacinia.util :as util]
+            [clj-graphql.db :as db]
+            [next.jdbc :as jdbc]
+            [next.jdbc.result-set :as rs]))
 
 (defn game-by-id
-  [_ {:keys [id]} _]
-  (->> (:games data)
-       (filter #(= id (:id %)))
-       first))
+  [db]
+  (fn [_ args _]
+    (db/find-game-by-id db (:id args))))
 
 (defn member-by-id
-  [_ {:keys [id]} _]
-  (->> (:members data)
-       (filter #(= id (:id %)))
-       first))
+  [db]
+  (fn [_ args _]
+    (db/find-member-by-id db (:id args))))
 
 (defn rating-summary
-  [_ _ {game-id :id}]
-  (let [ratings (->> (:ratings data)
-                     (filter #(= game-id (:game_id %)))
-                     (map :rating))
-        n       (count ratings)]
-    {:count   n
-     :average (if (zero? n)
-                0
-                (/ (apply + ratings)
-                   (float n)))}))
+  [db]
+  (fn [_ _ game]
+    (let [ratings (map :rating (db/list-ratings-for-game db (:id game)))
+          n       (count ratings)]
+      {:count   n
+       :average (if (zero? n)
+                  0
+                  (/ (apply + ratings)
+                     (float n)))})))
 
 (defn member-ratings
-  [_ _ {member-id :id}]
-  (->> (:ratings data)
-       (filter #(= member-id (:member_id %)))))
+  [db]
+  (fn [_ _ member]
+    (db/list-ratings-for-member db (:id member))))
 
 (defn game-rating->game
-  [_ _ {:keys [game_id]}]
-  (->> (:games data)
-       (filter #(= game_id (:id %)))
-       first))
+  [db]
+  (fn [_ _ game-rating]
+    (db/find-game-by-id db (:game_id game-rating))))
 
 (defn load-schema
-  []
+  [db]
   (-> (io/resource "hello-schema.edn")
       slurp
       edn/read-string
-      (util/attach-resolvers {:query/game-by-id         game-by-id
-                              :query/member-by-id       member-by-id
-                              :BoardGame/rating-summary rating-summary
-                              :GameRating/game          game-rating->game
-                              :Member/ratings           member-ratings})
+      (util/attach-resolvers {:query/game-by-id         (game-by-id db)
+                              :query/member-by-id       (member-by-id db)
+                              :BoardGame/rating-summary (rating-summary db)
+                              :GameRating/game          (game-rating->game db)
+                              :Member/ratings           (member-ratings db)})
       schema/compile))
 
-(defrecord SchemaProvider [schema]
+(defrecord SchemaProvider [schema db]
   component/Lifecycle
   (start [this]
-    (assoc this :schema (load-schema)))
+    (let [db-opts (jdbc/with-options (db) {:builder-fn rs/as-unqualified-lower-maps})]
+      (assoc this :schema (load-schema db-opts))))
 
   (stop [this]
     (assoc this :schema nil)))

@@ -2,20 +2,20 @@
 
 - [part 1: hello graphql](doc/hello.md)
 - [part 2: using component](doc/component.md)
-- [part 3: query and mutation](doc/query_mutation.md)
+- [part 3: queries](doc/queries.md)
 - [part 4: db](doc/db.md)
 - [part 5: subscription](doc/subscription.md)
 - [part 6: auth](doc/auth.md)
 
-## Installation
+## Setup 
 
-Download from http://example.com/FIXME.
+    $ docker-compose up -d
+    $ bin/setup-db.sh
+    
+## Development
 
-## Usage
-
-FIXME: explanation
-
-    $ java -jar clj-graphql-0.1.0-standalone.jar [args]
+    $ lein repl
+    user=> (start) 
 
 ## Options
 

@@ -3,7 +3,10 @@
   :url "http://example.com/FIXME"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [com.stuartsierra/component "1.0.0"]
-                 [com.walmartlabs/lacinia-pedestal "0.15.0-alpha-2"]]
+                 [com.walmartlabs/lacinia-pedestal "0.15.0-alpha-2"]
+                 [seancorfield/next.jdbc "1.1.613"]
+                 [org.postgresql/postgresql "42.2.18"]
+                 [com.zaxxer/HikariCP "3.4.5"]]
   :main ^:skip-aot clj-graphql.system
   :target-path "target/%s"
   :profiles {:dev     {:source-paths ["dev"]
