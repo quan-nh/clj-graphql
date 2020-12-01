@@ -16,7 +16,10 @@
 ## Development
 
     $ lein repl
-    user=> (start) 
+    user=> (start)
+    
+The GraphQL endpoint will be at http://localhost:8888/api
+and the GraphIQL client will be at http://localhost:8888/ide.     
 
 ## Options
 

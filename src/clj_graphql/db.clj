@@ -18,3 +18,11 @@
   (jdbc/execute! db ["select game_id, member_id, rating, created_at, updated_at
            from game_rating
            where member_id = ?" member-id]))
+
+(defn upsert-game-rating
+  [db game-id member-id rating]
+  (jdbc/execute! db
+                 ["insert into game_rating (game_id, member_id, rating)
+           values (?, ?, ?)
+           on conflict (game_id, member_id) do update set rating = ?"
+                  game-id member-id rating rating]))
