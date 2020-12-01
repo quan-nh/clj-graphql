@@ -2,10 +2,11 @@
 
 - [part 1: hello graphql](doc/hello.md)
 - [part 2: using component](doc/component.md)
-- [part 3: queries](doc/queries.md)
-- [part 4: db](doc/db.md)
-- [part 5: subscription](doc/subscription.md)
-- [part 6: auth](doc/auth.md)
+- [part 3: queries](https://github.com/quan-nh/clj-graphql/commit/00acf0391ff8a04eb9ccddb1c3f0e5ab610a85b3)
+- [part 4: db](https://github.com/quan-nh/clj-graphql/commit/e4bbed3737c8392622b0c9531cd4ce9cafd5e53a)
+- [part 5: mutations](doc/mutations.md)
+- [part 6: subscription](doc/subscription.md)
+- [part 7: auth](doc/auth.md)
 
 ## Setup 
 
