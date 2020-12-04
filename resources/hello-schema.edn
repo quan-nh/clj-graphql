@@ -42,7 +42,12 @@
                           :description "The Game rated by the member."
                           :resolve     :GameRating/game}
                  :rating {:type        (non-null Int)
-                          :description "The rating as 1 to 5 stars."}}}}
+                          :description "The rating as 1 to 5 stars."}}}
+
+  :Ping
+  {:description "Captures a message and a timestamp. This is used when testing Subscriptions."
+   :fields      {:message   {:type (non-null String)}
+                 :timestamp {:type (non-null String)}}}}
 
  :queries
  {:game_by_id
@@ -71,4 +76,14 @@
                  :member_id {:type (non-null Int)}
                  :rating    {:type        (non-null Int)
                              :description "Game rating as a number between 1 and 5."}}
-   :resolve     :mutation/rate-game}}}
+   :resolve     :mutation/rate-game}}
+
+ :subscriptions
+ {:ping
+  {:type        :Ping
+   :description "Sends the provided message a particular number of times, as a subscription."
+   :stream      :stream-ping
+   :args
+                {:count   {:type    Int
+                           :default 5}
+                 :message {:type String}}}}}

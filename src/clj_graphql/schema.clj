@@ -66,6 +66,23 @@
   (fn [_ _ game-rating]
     (db/find-game-by-id db (:game_id game-rating))))
 
+(def *ping-subscribes (atom 0))
+(def *ping-cleanups (atom 0))
+
+(defn stream-ping
+  [context {:keys [message count]} source-stream]
+  (swap! *ping-subscribes inc)
+  (let [runnable ^Runnable (fn []
+                             (dotimes [i count]
+                               (Thread/sleep 500)
+                               (source-stream {:message   (str message " #" (inc i))
+                                               :timestamp (System/currentTimeMillis)}))
+
+                             (source-stream nil))]
+    (.start (Thread. runnable "stream-ping-thread")))
+  ;; Return a cleanup fn
+  #(swap! *ping-cleanups inc))
+
 (defn load-schema
   [db]
   (-> (io/resource "hello-schema.edn")
@@ -77,6 +94,7 @@
                               :BoardGame/rating-summary (rating-summary db)
                               :GameRating/game          (game-rating->game db)
                               :Member/ratings           (member-ratings db)})
+      (util/attach-streamers {:stream-ping stream-ping})
       schema/compile))
 
 (defrecord SchemaProvider [schema db]
