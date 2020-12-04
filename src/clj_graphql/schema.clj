@@ -1,11 +1,12 @@
 (ns clj-graphql.schema
-  (:require [clojure.edn :as edn]
+  (:require [clj-graphql.db :as db]
+            [clojure.core.async :refer [alt! chan close! go timeout]]
+            [clojure.edn :as edn]
             [clojure.java.io :as io]
             [com.stuartsierra.component :as component]
-            [com.walmartlabs.lacinia.schema :as schema]
             [com.walmartlabs.lacinia.resolve :refer [resolve-as]]
+            [com.walmartlabs.lacinia.schema :as schema]
             [com.walmartlabs.lacinia.util :as util]
-            [clj-graphql.db :as db]
             [next.jdbc :as jdbc]
             [next.jdbc.result-set :as rs]))
 
@@ -83,6 +84,23 @@
   ;; Return a cleanup fn
   #(swap! *ping-cleanups inc))
 
+(defn stream-ping-async
+  [context {:keys [message count]} source-stream]
+  (let [abort-ch (chan)]
+    (go
+      (loop [countdown count]
+        (if (<= 0 countdown)
+          (do
+            (source-stream {:message   (str message " #" countdown)
+                            :timestamp (System/currentTimeMillis)})
+            (alt!
+              abort-ch nil
+
+              (timeout 1000) (recur (dec countdown))))
+          (source-stream nil))))
+    ;; Cleanup:
+    #(close! abort-ch)))
+
 (defn load-schema
   [db]
   (-> (io/resource "hello-schema.edn")
@@ -94,7 +112,7 @@
                               :BoardGame/rating-summary (rating-summary db)
                               :GameRating/game          (game-rating->game db)
                               :Member/ratings           (member-ratings db)})
-      (util/attach-streamers {:stream-ping stream-ping})
+      (util/attach-streamers {:stream-ping stream-ping-async})
       schema/compile))
 
 (defrecord SchemaProvider [schema db]

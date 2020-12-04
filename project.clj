@@ -2,6 +2,7 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/core.async "1.3.610"]
                  [com.stuartsierra/component "1.0.0"]
                  [com.walmartlabs/lacinia-pedestal "0.15.0-alpha-2"]
                  [seancorfield/next.jdbc "1.1.613"]
