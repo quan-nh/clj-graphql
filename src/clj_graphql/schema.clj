@@ -17,8 +17,9 @@
 
 (defn member-by-id
   [db]
-  (fn [_ args _]
-    (db/find-member-by-id db (:id args))))
+  (fn [{:keys [user-info]} {:keys [id]} _]
+    (prn user-info)
+    (db/find-member-by-id db id)))
 
 (defn rate-game
   [db]
