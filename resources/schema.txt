@@ -1,0 +1,56 @@
+"A physical or virtual board game."
+type BoardGame {
+  id: Int!
+  name: String!
+  rating_summary: GameRatingSummary!
+  "The description of the game."
+  description: String
+  "Designers who contributed to the game."
+  designers: String
+  "The minimum number of players the game supports."
+  min_players: Int
+  "The maximum number of players the game supports."
+  max_players: Int
+  "Play time, in minutes, for a typical game."
+  play_time: Int
+}
+
+"Summary of ratings for a single game."
+type GameRatingSummary {
+  "Number of ratings provided for the game.  Ratings are 1 to 5 stars."
+  count: Int!
+  "The average value of all ratings, or 0 if never rated."
+  average: Float!
+}
+
+"A member of Clojure Game Geek. Members can rate games."
+type Member {
+  id: Int!
+  "Unique name of member."
+  name: String!
+  "List of games and ratings provided by this member."
+  ratings: [GameRating]
+}
+
+"A member's rating of a particular game."
+type GameRating {
+  "The Game rated by the member."
+  game: BoardGame!
+  "The rating as 1 to 5 stars."
+  rating: Int!
+}
+
+type Query {
+  "Select a BoardGame by its unique id, if it exists."
+  game_by_id(id: Int!): BoardGame
+  "Select a ClojureGameGeek Member by their unique id, if it exists."
+  member_by_id(id: Int!): Member
+}
+
+type Mutation {
+  "Establishes a rating of a board game, by a Member.
+
+   On success (the game and member both exist), selects the BoardGame.
+   Otherwise, selects nil and an error."
+  rate_game(game_id: Int!, member_id: Int!, rating: Int!): BoardGame
+}
