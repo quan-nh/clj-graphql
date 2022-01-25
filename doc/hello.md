@@ -5,7 +5,8 @@ lein new app clj-graphql
 
 add `walmartlabs/lacinia-pedestal` deps
 ```clojure
-[com.walmartlabs/lacinia-pedestal "0.15.0-alpha-2"]
+[com.walmartlabs/lacinia-pedestal "1.1"]
+[io.aviso/logging "1.0"]
 ```
 
 start with a schema file, `resources/hello-schema.edn`
